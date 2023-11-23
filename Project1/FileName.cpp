@@ -6,7 +6,7 @@ class Location {
 private:
     int maxSeats = 0;
     int numRows = 0;
-    int numberOfZones = 0;  // Updated name to avoid conflict
+    int numberOfZones = 0;
     string* zones = nullptr;
     string name = "";
 
@@ -87,10 +87,57 @@ public:
         }
         return *this;
     }
+    friend istream& operator>>(istream& input, Location& l) {
+		input >> l.name;
+		input >> l.maxSeats;
+		input >> l.numRows;
+		input >> l.numberOfZones;
+
+		l.zones = new string[l.numberOfZones];
+        for (int i = 0; i < l.numberOfZones; i++) {
+			input >> l.zones[i];
+		}
+
+		return input;
+	}
+    friend ostream& operator<<(ostream& output, const Location& l) {
+        output << "Name: " << l.name << endl;
+        output << "Max seats: " << l.maxSeats << endl;
+        output << "Number of rows: " << l.numRows << endl;
+        output << "Number of zones: " << l.numberOfZones << endl;
+        output << "Zones: ";
+        for (int i = 0; i < l.numberOfZones; i++) {
+			output << l.zones[i] << " ";
+		}
+        output << endl;
+
+		return output;
+	}
+    void DisplayLocationInfo() const {
+		cout << "Name: " << name << endl;
+		cout << "Max seats: " << maxSeats << endl;
+		cout << "Number of rows: " << numRows << endl;
+		cout << "Number of zones: " << numberOfZones << endl;
+		cout << "Zones: ";
+        for (int i = 0; i < numberOfZones; i++) {
+			cout << zones[i] << " ";
+		}
+		cout << endl;
+	}
 
     ~Location() {
         delete[] this->zones;
     }
+    bool operator ==(Location l)
+	{
+        if (this->name == l.name && this->maxSeats == l.maxSeats)
+        {
+            return true;
+        }
+        else
+        {
+			return false;
+		}
 };
 
 	class EventDetails
@@ -233,6 +280,207 @@ public:
             return output;
         }
 	}
+    bool operator ==(EventDetails e)
+	{
+        if (this->EventName == e.EventName && this->NoOfParticipants == e.NoOfParticipants)
+        {
+			return true;
+		}
+        else
+        {
+			return false;
+		}
+	}
+    bool operator !=(EventDetails e)
+	{
+        if (this->EventName != e.EventName && this->NoOfParticipants != e.NoOfParticipants)
+        {
+			return true;
+		}
+        else
+        {
+			return false;
+		}
+	}
+};
+
+enum class Type { REGULAR, VIP, STUDENT, CHILDREN };
+class Ticket
+{
+private:
+    int id = 0;
+    Type type = Type::REGULAR;
+    int price = 0;
+    int row = 0;
+    int seat = 0;
+    string* ownerName = nullptr;
+    bool isBooked = false;
+    public:
+        static int const MIN_SIZE_FOR_OWNER_NAME = 3;
+        static string typeToString(Type type) {
+            switch (type) {
+			case Type::REGULAR:
+				return "Regular ticket";
+			case Type::VIP:
+				return "VIP ticket";
+			case Type::STUDENT:
+				return "Student ticket";
+			case Type::CHILDREN:
+				return "Children ticket";
+			default:
+				throw exception ("Unknown");
+			}
+		}
+		void setId(int newId) {
+            if (newId < 0) {
+				throw exception("Incorrect id");
+			}
+			this->id = newId;
+		}
+		void setType(Type newType) {
+			this->type = newType;
+		}
+		void setPrice(int newPrice) {
+            if (newPrice < 0) {
+				throw exception("Incorrect price");
+			}
+			this->price = newPrice;
+		}
+		void setRow(int newRow) {
+            if (newRow < 0) {
+				throw exception("Incorrect row");
+			}
+			this->row = newRow;
+		}
+		void setSeat(int newSeat) {
+            if (newSeat < 0) {
+				throw exception("Incorrect seat");
+			}
+			this->seat = newSeat;
+		}
+		void setOwnerName(string* newOwnerName) {
+            if (newOwnerName->size() < MIN_SIZE_FOR_OWNER_NAME)
+            {
+                throw exception("Short name for owner name");
+            }
+			this->ownerName = new string(*newOwnerName);
+		}
+		void setIsBooked(bool newIsBooked) {
+			this->isBooked = newIsBooked;
+		}
+        Ticket()
+        {
+            this->setId(0);
+			this->setType(Type::REGULAR);
+			this->setPrice(0);
+			this->setRow(0);
+			this->setSeat(0);
+			this->setOwnerName(new string(""));
+			this->setIsBooked(false);
+		}
+     
+		Ticket(int id, Type type, int price, int row, int seat, string* ownerName, bool isBooked) {
+			this->setId(id);
+			this->setType(type);
+			this->setPrice(price);
+			this->setRow(row);
+			this->setSeat(seat);
+			this->setOwnerName(ownerName);
+			this->setIsBooked(isBooked);
+		}
+		Ticket(const Ticket& source) {
+			this->id = source.id;
+			this->type = source.type;
+			this->price = source.price;
+			this->row = source.row;
+			this->seat = source.seat;
+			this->ownerName = new string(*source.ownerName);
+			this->isBooked = source.isBooked;
+		}
+		Ticket& operator=(const Ticket& source) {
+            if (this != &source) {
+				this->id = source.id;
+				this->type = source.type;
+				this->price = source.price;
+				this->row = source.row;
+				this->seat = source.seat;
+				delete this->ownerName;
+				this->ownerName = new string(*source.ownerName);
+				this->isBooked = source.isBooked;
+			}
+			return *this;
+		}
+		~Ticket() {
+			delete ownerName;
+		}
+		void displayInfoTicket() const {
+			cout << "Id: " << id << endl;
+			cout << "Type: " << typeToString(type) << endl;
+			cout << "Price: " << price << endl;
+			cout << "Row: " << row << endl;
+			cout << "Seat: " << seat << endl;
+			cout << "Owner name: " << *ownerName << endl;
+			cout << "Is booked: " << isBooked << endl;
+		}
+        friend istream& operator>>(istream& input, Ticket& t) {
+			input >> t.id;
+			int type;
+			input >> type;
+			t.type = static_cast<Type>(type);
+			input >> t.price;
+			input >> t.row;
+			input >> t.seat;
+			string ownerName;
+			input >> ownerName;
+			t.ownerName = new string(ownerName);
+			input >> t.isBooked;
+
+			return input;
+		}
+        friend ostream& operator<<(ostream& output, const Ticket& t) {
+			output << "Id: " << t.id << endl;
+			output << "Type: " << typeToString(t.type) << endl;
+			output << "Price: " << t.price << endl;
+			output << "Row: " << t.row << endl;
+			output << "Seat: " << t.seat << endl;
+			output << "Owner name: " << *t.ownerName << endl;
+			output << "Is booked: " << t.isBooked << endl;
+
+			return output;
+		}
+        bool operator ==(Ticket t)
+        {
+            if (this->id == t.id && this->price == t.price)
+            {
+				return true;
+			}
+            else
+            {
+                return false;
+            }
+		}
+        bool operator !=(Ticket t)
+        {
+            if (this->id != t.id && this->price != t.price)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        bool operator >=(Ticket t)
+		{
+            if (this->id >= t.id && this->price >= t.price)
+            {
+				return true;
+			}
+            else
+            {
+				return false;
+			}
+		}
 };
 int main()
 {
