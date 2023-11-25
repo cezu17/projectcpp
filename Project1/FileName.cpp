@@ -2,6 +2,19 @@
 #include <string>
 using namespace std;
 
+class ToCopy {
+public:
+    static char* copyString(const char* source) {
+        if (source == nullptr) {
+            return nullptr;
+        }
+        char* value = new char[strlen(source) + 1];
+        strcpy_s(value, strlen(source) + 1, source);
+        return value;
+    }
+};
+
+
 class Location {
 private:
     int maxSeats = 0;
@@ -23,12 +36,18 @@ public:
 
         this->name = newName;
     }
+    string getName() const {
+		return this->name;
+	}
 
     void setMaxSeats(int newMaxSeats) {
         if (newMaxSeats < 0) {
             throw exception("Incorrect number of seats");
         }
         this->maxSeats = newMaxSeats;
+    }
+    int getMaxSeats() {
+        return this->maxSeats;
     }
 
     void setNumRows(int newNumRows) {
@@ -37,12 +56,19 @@ public:
         }
         this->numRows = newNumRows;
     }
+    int getNumRows() const {
+		return this->numRows;
+	}
 
     void setNumberOfZones(int newNumberOfZones) {
         if (newNumberOfZones < 0) {
             throw exception("Incorrect number of zones");
         }
         this->numberOfZones = newNumberOfZones;
+    }
+    int getNumberOfZones() const {
+        return this->numberOfZones;
+
     }
 
     void setZones(string* newZones, int numberOfZones) {
@@ -51,6 +77,14 @@ public:
             this->zones[i] = newZones[i];
         }
         this->numberOfZones = numberOfZones;
+    }
+    string* getZones()
+    {
+        string* copy = new string[this->numberOfZones];
+        for (int i = 0; i < this->numberOfZones; i++) {
+			copy[i] = this->zones[i];
+		}
+        return copy;
     }
 
     Location(string name, int maxSeats, int numRows, string* zones, int numberOfZones) {
@@ -129,15 +163,16 @@ public:
         delete[] this->zones;
     }
     bool operator ==(Location l)
-	{
+    {
         if (this->name == l.name && this->maxSeats == l.maxSeats)
         {
             return true;
         }
         else
         {
-			return false;
-		}
+            return false;
+        }
+    }
 };
 
 	class EventDetails
@@ -160,6 +195,10 @@ public:
 			}
 			this->EventName = newEventName;
 		}
+        string getEventName() const {
+            return this->EventName;
+
+        }
         void setDate(const char* newDate) {
             if (strlen(newDate) != 10) {
                 throw exception("Wrong date");
@@ -169,6 +208,10 @@ public:
             }
 
             strcpy_s(this->date, newDate);
+        }
+        char* getDate()
+        {
+            char* copy= ToCopy::copyString(this->date);
         }
         void setTime(const char* newTime) {
             if (strlen(newTime) != 6) {
@@ -180,6 +223,11 @@ public:
 
 			strcpy_s(this->time, newTime);
 		}
+        char* getTime()
+        {
+			char* copy = ToCopy::copyString(this->time);
+		}
+
         void setParticipants(int* newParticipants, int newNoOfParticipants) {
             if (newNoOfParticipants < MIN_PARTICIPANTS) {
                 throw exception("Number of participants is less than minimum allowed");
@@ -189,6 +237,14 @@ public:
                 this->participants[i] = newParticipants[i];
             }
             this->NoOfParticipants = newNoOfParticipants;
+        }
+        int* getParticipants()
+        {
+			int* copy = new int[NoOfParticipants];
+            for (int i = 0; i < NoOfParticipants; i++) {
+				copy[i] = participants[i];
+            }
+            return copy;
         }
         EventDetails(string eventName, int* participants, int noOfParticipants, const char* date, const char* time) {
             this->setEventName(eventName);
@@ -279,7 +335,6 @@ public:
 
             return output;
         }
-	}
     bool operator ==(EventDetails e)
 	{
         if (this->EventName == e.EventName && this->NoOfParticipants == e.NoOfParticipants)
@@ -337,8 +392,15 @@ private:
 			}
 			this->id = newId;
 		}
+        int getId() {
+            return this->id;
+        }
+
 		void setType(Type newType) {
 			this->type = newType;
+		}
+        Type getType() {
+			return this->type;
 		}
 		void setPrice(int newPrice) {
             if (newPrice < 0) {
@@ -346,17 +408,26 @@ private:
 			}
 			this->price = newPrice;
 		}
+        int getPrice() {
+			return this->price;
+		}
 		void setRow(int newRow) {
             if (newRow < 0) {
 				throw exception("Incorrect row");
 			}
 			this->row = newRow;
 		}
+        int getRow() {
+            return this->row;
+        }
 		void setSeat(int newSeat) {
             if (newSeat < 0) {
 				throw exception("Incorrect seat");
 			}
 			this->seat = newSeat;
+		}
+        int getSeat()  {
+			return this->seat;
 		}
 		void setOwnerName(string* newOwnerName) {
             if (newOwnerName->size() < MIN_SIZE_FOR_OWNER_NAME)
@@ -365,9 +436,15 @@ private:
             }
 			this->ownerName = new string(*newOwnerName);
 		}
+        string* getOwnerName()  {
+			return this->ownerName;
+		}
 		void setIsBooked(bool newIsBooked) {
 			this->isBooked = newIsBooked;
 		}
+        bool getIsBooked()  {
+            return this->isBooked;
+        }
         Ticket()
         {
             this->setId(0);
@@ -481,8 +558,19 @@ private:
 				return false;
 			}
 		}
+        int operator[](int index) const {
+            switch (index) {
+            case 0:
+                return id;
+            case 1:
+                return price;
+                
+            default:
+                throw exception("Invalid ticket attribute");
+            }
+        }
 };
-int main()
-{
-	std::cout << "Hello World!" << std::endl;
+
+int main() {
+    cout<< "Hello World!\n";
 }
