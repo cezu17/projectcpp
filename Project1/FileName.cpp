@@ -19,10 +19,10 @@ class Location {
 private:
     int maxSeats = 0;
     int numRows = 0;
-    int numberOfZones = 0;
-    string* zones = nullptr;
     string name = "";
 
+    int numberOfZones = 0;
+    string* zones = nullptr;
 public:
     static const int MIN_SIZE_FOR_NAME = 3;
 
@@ -179,6 +179,19 @@ public:
             return false;
         }
     }
+    void operator +=(const string newZone)
+    {
+		this->numberOfZones++;
+        string* copy = new string[this->numberOfZones];
+        for (int i = 0; i < this->numberOfZones-1; i++) 
+        {
+            copy[i] = this->zones[i];
+        }
+        delete[] this->zones;
+        copy[this->numberOfZones - 1] = newZone;
+        this->zones = copy;
+
+	}
 };
 
 	class EventDetails
