@@ -93,6 +93,12 @@ public:
         this->setNumRows(numRows);
         this->setZones(zones, numberOfZones);
     }
+    Location(string name, int maxSeats, int numRows, int numberOfZones) {
+		this->setName(name);
+		this->setMaxSeats(maxSeats);
+		this->setNumRows(numRows);
+		this->setNumberOfZones(numberOfZones);
+	}
 
     Location(const Location& source) {
         this->setName(source.name);
@@ -570,7 +576,3 @@ private:
             }
         }
 };
-
-int main() {
-    cout<< "Hello World!\n";
-}
